@@ -67,6 +67,10 @@ public class TileCreator : MonoBehaviour {
         }
         return coordinateSet;
     }
+
+    void placeBurger() {
+
+    }
     // Update is called once per frame
     void Update() {
 
