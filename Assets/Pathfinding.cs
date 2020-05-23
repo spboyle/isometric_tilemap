@@ -20,7 +20,7 @@ public class Pathfinding : MonoBehaviour
     Rigidbody2D rbody;
     GameBoard gameBoard;
 
-    public static Vector3Int nullParent = new Vector3Int(-1, -1, -1);
+    public static Vector3Int nullParent = new Vector3Int(-5000, -5000, -5000);
 
     private void Awake()
     {
@@ -32,27 +32,6 @@ public class Pathfinding : MonoBehaviour
     private void Start() {
 
     }
-
-    // Update is called once per frame
-    // void FixedUpdate()
-    // {
-    //     Vector2 currentPos = rbody.position;
-    //     float horizontalInput = Input.GetAxis("Horizontal");
-    //     float verticalInput = Input.GetAxis("Vertical");
-    //     // Clamp movement speed
-    //     Vector2 gameMovement = Vector2.ClampMagnitude(
-    //         new Vector2(horizontalInput, verticalInput), 1
-    //     );
-    //     // Translate to isometric movement
-    //     float xMove = gameMovement.x + gameMovement.y;
-    //     float yMove = (float)(0.5) * (gameMovement.y - gameMovement.x);
-    //     Vector2 moveVector = new Vector2(xMove, yMove);
-    //     // Render the movement
-    //     Vector2 movement = moveVector * movementSpeed;
-    //     Vector2 newPos = currentPos + movement * Time.fixedDeltaTime;
-    //     isoRenderer.SetDirection(movement);
-    //     rbody.MovePosition(newPos);
-    // }
 
     public List<Vector3Int> FindBurger() {
         Dictionary<Vector3Int, PathNode> closed = new Dictionary<Vector3Int, PathNode>();
@@ -109,15 +88,39 @@ public class Pathfinding : MonoBehaviour
     }
 
     Vector3Int[] GetNeighbors(Vector3Int location) {
-        Vector3Int[] neighbors = new Vector3Int[8];
-        int index = 0;
-        for (int xDelta = -1; xDelta < 2; xDelta++) {
-            for (int yDelta = -1; yDelta < 2; yDelta++) {
-                if (xDelta == 0 && yDelta == 0) continue;
-                neighbors[index++] = new Vector3Int(location.x + xDelta, location.y + yDelta, location.z);
-            }
+        List<Vector3Int> allNeighbors = new List<Vector3Int>();
+
+        Vector3Int upNeighbor = location + Vector3Int.up;
+        Vector3Int rightNeighbor = location + Vector3Int.right;
+        Vector3Int downNeighbor = location + Vector3Int.down;
+        Vector3Int leftNeighbor = location + Vector3Int.left;
+
+        bool upIsBlock = gameBoard.obstacleIsoCoordinates.Contains(upNeighbor);
+        bool rightIsBlock = gameBoard.obstacleIsoCoordinates.Contains(rightNeighbor);
+        bool downIsBlock = gameBoard.obstacleIsoCoordinates.Contains(downNeighbor);
+        bool leftIsBlock = gameBoard.obstacleIsoCoordinates.Contains(leftNeighbor);
+
+        // Add straight neighbors
+        if (!upIsBlock) allNeighbors.Add(upNeighbor);
+        if (!rightIsBlock) allNeighbors.Add(rightNeighbor);
+        if (!downIsBlock) allNeighbors.Add(downNeighbor);
+        if (!leftIsBlock) allNeighbors.Add(leftNeighbor);
+
+        // Add diagonal neighbors only if both straight neighbors are empty
+        if (!upIsBlock && !rightIsBlock) {
+            allNeighbors.Add(location + Vector3Int.up + Vector3Int.right);
         }
-        return neighbors;
+        if (!rightIsBlock && !downIsBlock) {
+            allNeighbors.Add(location + Vector3Int.right + Vector3Int.down);
+        }
+        if (!downIsBlock && !leftIsBlock) {
+            allNeighbors.Add(location + Vector3Int.down + Vector3Int.left);
+        }
+        if (!leftIsBlock && !upIsBlock) {
+            allNeighbors.Add(location + Vector3Int.left + Vector3Int.up);
+        }
+
+        return allNeighbors.ToArray();
     }
 
     KeyValuePair<Vector3Int, PathNode> FindNextNodeToExplore(Dictionary<Vector3Int, PathNode> nodes) {

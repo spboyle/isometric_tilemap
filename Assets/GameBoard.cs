@@ -59,6 +59,9 @@ public class GameBoard : MonoBehaviour
     public void PlaceBurger() {
         burgerIsoCoordinates = GenerateLegalIsoCoordinates();
         burger.transform.position = IsoToRealConverter.IsometricToRealCoordinates(burgerIsoCoordinates, 0.0f, -.75f);
+        // Re-route the witch to the new burger;
+        tileCreator.DrawPath(witchPathfinding.FindBurger());
+
     }
 
     Vector3Int GenerateLegalIsoCoordinates() {
