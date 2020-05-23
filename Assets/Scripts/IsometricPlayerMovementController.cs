@@ -7,7 +7,6 @@ public class IsometricPlayerMovementController : MonoBehaviour
 
     public float movementSpeed = 1f;
     IsometricCharacterRenderer isoRenderer;
-
     Rigidbody2D rbody;
 
     private void Awake()
@@ -23,7 +22,7 @@ public class IsometricPlayerMovementController : MonoBehaviour
         Vector2 currentPos = rbody.position;
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        // Clamp movement speed 
+        // Clamp movement speed
         Vector2 gameMovement = Vector2.ClampMagnitude(
             new Vector2(horizontalInput, verticalInput), 1
         );
@@ -39,6 +38,6 @@ public class IsometricPlayerMovementController : MonoBehaviour
     }
 
     private void Update() {
-        
+
     }
 }

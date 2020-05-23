@@ -7,6 +7,7 @@ public static class TileLoader
 {
     private const string basicFloorTileName = "Tilemaps/Isometric/Tiles/Temple/temple-sliced_16";
     private const string basicFloorCubeName = "Tilemaps/Isometric/Tiles/Temple/temple-sliced_26";
+    private const string moltenCenterName = "Tilemaps/Isometric/Tiles/Temple/molten_center";
     private const string colliderCubeName = "Tilemaps/Isometric/Colliders/ColliderTiles/cube08-a";
 
     public static Tile GetBasicFloorTile()
@@ -22,5 +23,10 @@ public static class TileLoader
     public static Tile GetBasicColliderCube()
     {
         return (Tile)Resources.Load(colliderCubeName, typeof(Tile));
+    }
+
+    public static Tile GetMoltenCenterTile()
+    {
+        return (Tile)Resources.Load(moltenCenterName, typeof(Tile));
     }
 }

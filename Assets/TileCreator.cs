@@ -6,10 +6,8 @@ using UnityEngine.Tilemaps;
 public class TileCreator : MonoBehaviour {
     // Start is called before the first frame update
     Tilemap groundMap, floor1Map, collisionMap;
-    private const int numObstacles = 17;
-    private const int mapSize = 15;
 
-    void Start() {
+    void Awake() {
         // Identify each tilemap
         foreach (Tilemap map in GetComponentsInChildren<Tilemap>()) {
             // How to set tilemap size programmatically?
@@ -26,12 +24,9 @@ public class TileCreator : MonoBehaviour {
                     break;
             }
         }
-
-        DrawGround();
-        DrawObstacles();
     }
 
-    void DrawGround() {
+    public void DrawGround(int mapSize) {
         Tile basicFloorTile = TileLoader.GetBasicFloorTile();
 
         for (int mapX = 0; mapX < mapSize; mapX++) {
@@ -47,30 +42,24 @@ public class TileCreator : MonoBehaviour {
         // }
     }
 
-    void DrawObstacles() {
+    public void DrawObstacles(HashSet<Vector3Int> obstacleCoordinates) {
         Tile basicFloorCube = TileLoader.GetBasicFloorCube();
         Tile collisionCube = TileLoader.GetBasicColliderCube();
 
-        foreach (Vector3Int pos in GenerateObstacleCoordinates()) {
+        foreach (Vector3Int pos in obstacleCoordinates) {
             floor1Map.SetTile(pos, basicFloorCube);
             collisionMap.SetTile(pos, collisionCube);
         }
     }
 
-    HashSet<Vector3Int> GenerateObstacleCoordinates() {
-        Vector3Int[] coordinates = new Vector3Int[numObstacles];
-        HashSet<Vector3Int> coordinateSet = new HashSet<Vector3Int>();
-        while (coordinateSet.Count < numObstacles) {
-            int x = Random.Range(0, mapSize);
-            int y = Random.Range(0, mapSize);
-            coordinateSet.Add(new Vector3Int(x, y, 0));
+    public void DrawPath(List<Vector3Int> path) {
+        Tile moltenCenterTile = TileLoader.GetMoltenCenterTile();
+        foreach(Vector3Int location in path) {
+            groundMap.SetTile(location, moltenCenterTile);
         }
-        return coordinateSet;
     }
 
-    void placeBurger() {
-
-    }
+    // }
     // Update is called once per frame
     void Update() {
 
