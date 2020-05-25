@@ -14,6 +14,7 @@ public class ColliderTrigger : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other) {
         print("You triggered the burger!");
         gameBoard.PlaceBurger();
+        gameBoard.Restart();
     }
 
     // Update is called once per frame

@@ -14,7 +14,6 @@ public class GameBoard : MonoBehaviour
     GameObject witch;
     Pathfinding witchPathfinding;
 
-
     void Awake() {
         tileCreator = GetComponentInChildren<TileCreator>();
         burger = GameObject.Find("BurgerObject");
@@ -30,14 +29,22 @@ public class GameBoard : MonoBehaviour
         tileCreator.DrawObstacles(obstacleIsoCoordinates);
         PlaceBurger();
         PlaceWitch();
-        List<Vector3Int> path = witchPathfinding.FindBurger();
-        tileCreator.DrawPath(path);
+        StartBurgerHunt();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    public void StartBurgerHunt() {
+        List<Vector3Int> pathToBurger = witchPathfinding.FindBurger();
+        tileCreator.DrawPath(pathToBurger);
+        witch.GetComponent<IsometricPlayerMovementController>().setPath(pathToBurger);
 
+    }
+
+    public void Restart() {
+        FindWitch();
+        tileCreator.DrawGround(mapSize);
+        tileCreator.DrawObstacles(obstacleIsoCoordinates);
+        // Re-route the witch to the new burger
+        StartBurgerHunt();
     }
 
     HashSet<Vector3Int> GenerateObstacleCoordinates() {
@@ -56,12 +63,14 @@ public class GameBoard : MonoBehaviour
         witch.transform.position = IsoToRealConverter.IsometricToRealCoordinates(witchIsoCoordinates);
     }
 
+    public void FindWitch() {
+        witchIsoCoordinates = IsoToRealConverter.RealToIsometricCoordinates(witch.transform.position);
+    }
+
     public void PlaceBurger() {
         burgerIsoCoordinates = GenerateLegalIsoCoordinates();
         burger.transform.position = IsoToRealConverter.IsometricToRealCoordinates(burgerIsoCoordinates, 0.0f, -.75f);
-        // Re-route the witch to the new burger;
-        tileCreator.DrawPath(witchPathfinding.FindBurger());
-
+        print("Burger at " + burgerIsoCoordinates);
     }
 
     Vector3Int GenerateLegalIsoCoordinates() {
@@ -72,5 +81,14 @@ public class GameBoard : MonoBehaviour
         }
 
         return coordinates;
+    }
+
+    void FixedUpdate() {
+        Vector3Int oldWitch = new Vector3Int(witchIsoCoordinates.x, witchIsoCoordinates.y, witchIsoCoordinates.z);
+        FindWitch();
+        if (oldWitch != witchIsoCoordinates) {
+            print("witch at " + witchIsoCoordinates);
+        }
+
     }
 }

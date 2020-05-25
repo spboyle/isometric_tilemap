@@ -73,10 +73,6 @@ public class Pathfinding : MonoBehaviour
         }
         path.Reverse();
 
-        foreach(Vector3Int successNode in path) {
-            print(successNode);
-        }
-
         return path;
     }
 
